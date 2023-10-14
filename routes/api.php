@@ -17,3 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::prefix('teams')->group(function () {
+    Route::get('/', function (Request $request) {
+        return [];
+    })->name('teams.index');
+});
