@@ -20,6 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('teams')->group(function () {
     Route::get('/', function (Request $request) {
-        return [];
+        return [
+            'data' => [],
+        ];
     })->name('teams.index');
 });
