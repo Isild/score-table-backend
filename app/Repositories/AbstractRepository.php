@@ -2,8 +2,8 @@
 
 namespace App\Repositories;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 
 abstract class AbstractRepository
@@ -18,9 +18,9 @@ abstract class AbstractRepository
     /**
      * Function to return collection of model data.
      * 
-     * @return Collection
+     * @return LengthAwarePaginator
      */
-    abstract public function getAll(): Collection;
+    abstract public function getAll(): LengthAwarePaginator;
 
     /**
      * Function return single model instance base on id.
