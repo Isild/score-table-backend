@@ -16,11 +16,13 @@ abstract class AbstractRepository
     protected Model $model;
 
     /**
-     * Function to return collection of model data.
+     * Function to return pagination of model data base on filters.
+     * 
+     * @param array $filters
      * 
      * @return LengthAwarePaginator
      */
-    abstract public function getAll(): LengthAwarePaginator;
+    abstract public function getAll(array $filters): LengthAwarePaginator;
 
     /**
      * Function return single model instance base on id.
