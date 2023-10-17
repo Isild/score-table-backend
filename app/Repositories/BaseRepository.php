@@ -14,7 +14,7 @@ abstract class BaseRepository extends AbstractRepository
      */
     public function getAll(array $filters): LengthAwarePaginator
     {
-        //
+        return $this->model::class::paginate($filters['limit'] ?? 50);
     }
 
     /**
@@ -22,7 +22,7 @@ abstract class BaseRepository extends AbstractRepository
      */
     public function getById(int $id): Model
     {
-        //
+        return $this->model::class::where('id', '=', $id)->first();
     }
 
     /**
@@ -30,7 +30,7 @@ abstract class BaseRepository extends AbstractRepository
      */
     public function create(array $data): Model
     {
-        //
+        return $this->model::class::create($data);
     }
 
     /**
@@ -38,7 +38,12 @@ abstract class BaseRepository extends AbstractRepository
      */
     public function update(Model $model, array $data): Model
     {
-        //
+        foreach ($data as $key => $value) {
+            $model->$key = $value;
+        }
+        $model->saveOrFail();
+
+        return $model;
     }
 
     /**
@@ -46,6 +51,6 @@ abstract class BaseRepository extends AbstractRepository
      */
     public function delete(Model $model): bool
     {
-        //
+        return $model->delete();
     }
 }
