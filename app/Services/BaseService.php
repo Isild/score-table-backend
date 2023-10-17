@@ -16,7 +16,7 @@ abstract class BaseService implements ServiceInterface
      */
     public function getAll(array $filters): LengthAwarePaginator
     {
-        //
+        return $this->repository->getAll($filters);
     }
 
     /**
@@ -24,7 +24,7 @@ abstract class BaseService implements ServiceInterface
      */
     public function getById(int $id): Model
     {
-        //
+        return $this->repository->getById($id);
     }
 
     /**
@@ -32,7 +32,7 @@ abstract class BaseService implements ServiceInterface
      */
     public function create(array $data): Model
     {
-        //
+        return $this->repository->create($data);
     }
 
     /**
@@ -40,7 +40,7 @@ abstract class BaseService implements ServiceInterface
      */
     public function update(Model $model, array $data): Model
     {
-        //
+        return $this->repository->update($model, $data);
     }
 
     /**
@@ -48,6 +48,6 @@ abstract class BaseService implements ServiceInterface
      */
     public function delete(Model $model): bool
     {
-        //
+        return $this->repository->delete($model);
     }
 }
