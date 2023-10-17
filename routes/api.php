@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TeamController;
 use App\Http\Requests\TeamDeleteRequest;
 use App\Http\Requests\TeamGetIndexRequest;
 use App\Http\Requests\TeamGetShowRequest;
@@ -27,30 +28,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::prefix('teams')->group(function () {
-    Route::get('/', function (TeamGetIndexRequest $request) {
-        $repo = new TeamService(new TeamRepository(new Team()));
-
-        return $repo->getAll($request->validated());
-    })->name('teams.index');
-    Route::post('/', function (TeamPostRequest $request) {
-        $repo = new TeamService(new TeamRepository(new Team()));
-        $team = $repo->create($request->validated());
-
-        return $team;
-    })->name('teams.create');
-    Route::get('/{team}', function (TeamGetShowRequest $request, Team $team) {
-        return $team;
-    })->name('teams.show');
-    Route::put('/{team}', function (TeamPutRequest $request, Team $team) {
-        $repo = new TeamService(new TeamRepository(new Team()));
-        $repo->update($team, $request->validated());
-
-        return $team;
-    })->name('teams.update');
-    Route::delete('/{team}', function (TeamDeleteRequest $request, Team $team) {
-        $repo = new TeamService(new TeamRepository(new Team()));
-        $repo->delete($team);
-
-        return true;
-    })->name('teams.delete');
+    Route::get('/', [TeamController::class, 'index'])->name('teams.index');
+    Route::post('/', [TeamController::class, 'post'])->name('teams.create');
+    Route::get('/{model}', [TeamController::class, 'show'])->name('teams.show');
+    Route::put('/{model}', [TeamController::class, 'put'])->name('teams.update');
+    Route::delete('/{model}', [TeamController::class, 'delete'])->name('teams.delete');
 });
