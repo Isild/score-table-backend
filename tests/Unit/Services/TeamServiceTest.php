@@ -92,4 +92,24 @@ class TeamServiceTest extends TestCase
         $modelData = $resp->attributesToArray();
         $this->assertEquals($data['name'], $modelData['name']);
     }
+
+    public function test_delete()
+    {
+        $data = [
+            'name' => 'name'
+        ];
+        $modelInstance = Team::factory()->make($data);
+
+        $repository = $this->mock(TeamRepository::class, function (MockInterface $mock) use ($modelInstance) {
+            $mock->shouldReceive('delete')
+                ->with($modelInstance)
+                ->once()
+                ->andReturn(true);
+        });
+
+        $service = new TeamService($repository);
+        $resp = $service->delete($modelInstance);
+
+        $this->assertTrue($resp);
+    }
 }
