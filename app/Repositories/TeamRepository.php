@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class TeamRepository extends BaseRepository
 {
-    public function __construct(protected Model $model)
+    public function __construct(Team $model)
     {
-        //
+        $this->model = $model;
     }
 }

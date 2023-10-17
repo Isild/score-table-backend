@@ -2,14 +2,12 @@
 
 namespace App\Services;
 
-use App\Models\Team;
-use App\Repositories\BaseRepository;
-
+use App\Repositories\TeamRepository;
 
 class TeamService extends BaseService
 {
-    public function __construct(protected BaseRepository $repository)
+    public function __construct(TeamRepository $repository)
     {
-        //
+        $this->repository = $repository;
     }
 }
