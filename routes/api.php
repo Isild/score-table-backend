@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Team;
+use App\Repositories\TeamRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,7 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::prefix('teams')->group(function () {
-    Route::get('/', function (Request $request) {
-        return DB::table('teams')->paginate($request->get('limit') ?? 50);
-    })->name('teams.index');
 });
