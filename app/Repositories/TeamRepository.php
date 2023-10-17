@@ -9,6 +9,6 @@ class TeamRepository extends BaseRepository
 {
     public function __construct(protected Model $model)
     {
-        $model = new Team();
+        //
     }
 }
