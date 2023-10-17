@@ -10,11 +10,30 @@ class GetTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * Index test.
-     *
-     * @return void
-     */
+    protected $invalidPayload = [];
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->invalidPayload = [
+            'limit' => [
+                1,
+                false,
+                true,
+                null,
+                "a",
+            ],
+            'page' => [
+                1,
+                false,
+                true,
+                null,
+                "a",
+            ],
+        ];
+    }
+
     public function test_index(): void
     {
         $teams = Team::factory(10)->create();
@@ -32,11 +51,7 @@ class GetTest extends TestCase
         }
     }
 
-    /**
-     * Test for index response structure.
-     *
-     * @return void
-     */
+
     public function test_index_structure(): void
     {
         $teams = Team::factory(10)->create();
@@ -74,11 +89,6 @@ class GetTest extends TestCase
         ]);
     }
 
-    /**
-     * Index limit test.
-     *
-     * @return void
-     */
     public function test_index_query_limit(): void
     {
         $limit = 1;
@@ -105,11 +115,6 @@ class GetTest extends TestCase
         $this->assertEquals($foundTeam->toArray(), $responseData[0]);
     }
 
-    /**
-     * Index limit test.
-     *
-     * @return void
-     */
     public function test_index_query_page(): void
     {
         $limit = 1;
@@ -171,5 +176,18 @@ class GetTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertEquals($model->toArray(), $responseData);
+    }
+
+    public function test_invalid_input(): void
+    {
+        foreach ($this->invalidPayload as $key => $values) {
+            foreach ($values as $value) {
+                $response = $this->post(route('teams.create'), [
+                    $key => $value,
+                ]);
+
+                $response->assertStatus(422);
+            }
+        }
     }
 }
