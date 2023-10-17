@@ -27,7 +27,7 @@ class DeleteTest extends TestCase
 
     public function test_delete_not_found(): void
     {
-        $response = $this->delete(route('teams.create') . "/99999");
+        $response = $this->delete(route('teams.index') . "/99999");
 
         $responseData = json_decode($response->getContent(), true);
 

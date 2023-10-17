@@ -55,7 +55,7 @@ class PutTest extends TestCase
 
     public function test_put_not_found(): void
     {
-        $response = $this->put(route('teams.create') . "/99999", $this->validPayload);
+        $response = $this->put(route('teams.index') . "/99999", $this->validPayload);
 
         $responseData = json_decode($response->getContent(), true);
 

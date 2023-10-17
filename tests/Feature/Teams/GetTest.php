@@ -178,6 +178,16 @@ class GetTest extends TestCase
         $this->assertEquals($model->toArray(), $responseData);
     }
 
+    public function test_show_not_found(): void
+    {
+        $response = $this->get(route('teams.index') . '/9999');
+
+        $responseData = json_decode($response->getContent(), true);
+
+        $response->assertStatus(404);
+        $this->assertEquals('Resource not found.', $responseData['message']);
+    }
+
     public function test_invalid_input(): void
     {
         foreach ($this->invalidPayload as $key => $values) {
