@@ -21,4 +21,30 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::prefix('teams')->group(function () {
+    Route::get('/', function (Request $request) {
+        $repo = new TeamRepository(new Team());
+
+        return $repo->getAll($request->all());
+    })->name('teams.index');
+    Route::post('/', function (Request $request) {
+        $repo = new TeamRepository(new Team());
+        $team = $repo->create($request->all());
+
+        return $team;
+    })->name('teams.create');
+    Route::get('/{team}', function (Request $request, Team $team) {
+        return $team;
+    })->name('teams.show');
+    Route::put('/{team}', function (Request $request, Team $team) {
+        $repo = new TeamRepository(new Team());
+        $repo->update($team, $request->all());
+
+        return $team;
+    })->name('teams.update');
+    Route::delete('/{team}', function (Request $request, Team $team) {
+        $repo = new TeamRepository(new Team());
+        $repo->delete($team);
+
+        return true;
+    })->name('teams.delete');
 });
