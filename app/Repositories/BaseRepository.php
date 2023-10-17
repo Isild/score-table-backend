@@ -2,10 +2,11 @@
 
 namespace App\Repositories;
 
+use App\Interfaces\RepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 
-abstract class BaseRepository extends AbstractRepository
+abstract class BaseRepository implements RepositoryInterface
 {
     protected Model $model;
 

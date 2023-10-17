@@ -1,20 +1,13 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Interfaces;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 
 
-abstract class AbstractRepository
+interface RepositoryInterface
 {
-    /**
-     * Model
-     * 
-     * @var Model
-     */
-    protected Model $model;
-
     /**
      * Function to return pagination of model data base on filters.
      * 
@@ -22,7 +15,7 @@ abstract class AbstractRepository
      * 
      * @return LengthAwarePaginator
      */
-    abstract public function getAll(array $filters): LengthAwarePaginator;
+    public function getAll(array $filters): LengthAwarePaginator;
 
     /**
      * Function return single model instance base on id.
@@ -31,7 +24,7 @@ abstract class AbstractRepository
      * 
      * @return Model
      */
-    abstract public function getById(int $id): Model;
+    public function getById(int $id): Model;
 
     /**
      * Function create model instance base on date.
@@ -40,7 +33,7 @@ abstract class AbstractRepository
      * 
      * @return Model
      */
-    abstract public function create(array $data): Model;
+    public function create(array $data): Model;
 
     /**
      * Function update model instance base on date.
@@ -50,7 +43,7 @@ abstract class AbstractRepository
      * 
      * @return Model
      */
-    abstract public function update(Model $model, array $data): Model;
+    public function update(Model $model, array $data): Model;
 
     /**
      * Function remove model instance.
@@ -59,5 +52,5 @@ abstract class AbstractRepository
      * 
      * @return bool
      */
-    abstract public function delete(Model $model): bool;
+    public function delete(Model $model): bool;
 }
