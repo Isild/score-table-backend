@@ -161,4 +161,15 @@ class GetTest extends TestCase
         $this->assertEquals($foundTeam, $teams->last());
         $this->assertEquals($foundTeam->toArray(), $responseData[0]);
     }
+
+    public function test_show()
+    {
+        $model = Team::factory()->create();
+
+        $response = $this->get(route('teams.show', $model));
+        $responseData = json_decode($response->getContent(), true);
+
+        $response->assertStatus(200);
+        $this->assertEquals($model->toArray(), $responseData);
+    }
 }
