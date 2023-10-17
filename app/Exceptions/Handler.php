@@ -2,7 +2,11 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -46,5 +50,35 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+    /**
+     * Render an exception into an HTTP response.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Throwable  $e
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Throwable
+     */
+    public function render($request, Throwable $e)
+    {
+        if ($e instanceof MethodNotAllowedException || $e instanceof MethodNotAllowedHttpException) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'code' => 405
+            ], 405);
+        } elseif ($e instanceof ValidationException) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'code' => 422
+            ], 422);
+        } elseif ($e instanceof ModelNotFoundException) {
+            return response()->json([
+                'message' => "Resource not found.",
+                'code' => 404
+            ], 404);
+        }
+
+        return parent::render($request, $e);
     }
 }
