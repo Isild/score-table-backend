@@ -8,9 +8,12 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Mockery;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class TeamRepositoryTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_get_all()
     {
         $page = new LengthAwarePaginator([], 1, 1);
