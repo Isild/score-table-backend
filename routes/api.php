@@ -68,6 +68,14 @@ Route::prefix('matches')->group(function () {
         return $footballMatch;
     })->name('matches.stop');
     Route::patch('/{footballMatch}/score', function (Request $request, FootballMatch $footballMatch) {
-        //
+        if ($footballMatch->total_time == '00:00:00') {
+            $footballMatch->home_team_score = $request->all()['home_team_score'];
+            $footballMatch->away_team_score = $request->all()['away_team_score'];
+            $footballMatch->save();
+        } else {
+            return 403;
+        }
+
+        return $footballMatch;
     })->name('matches.update-score');
 });
