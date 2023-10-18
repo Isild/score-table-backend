@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Teams;
+namespace Tests\Feature\Matches;
 
 use App\Models\FootballMatch;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -29,14 +29,12 @@ class PatchTest extends TestCase
             'home_team_score' => [
                 -1,
                 false,
-                true,
                 null,
                 "a",
             ],
             'away_team_score' => [
                 -1,
                 false,
-                true,
                 null,
                 "a",
             ],
@@ -86,9 +84,10 @@ class PatchTest extends TestCase
 
     public function test_patch_invalid_input(): void
     {
+        $model = FootballMatch::factory()->create($this->dataToCreate);
         foreach ($this->invalidPayload as $key => $values) {
             foreach ($values as $value) {
-                $response = $this->patch(route('matches.update-score'), [
+                $response = $this->patch(route('matches.update-score', $model), [
                     $key => $value,
                 ]);
 

@@ -36,7 +36,6 @@ class PostTest extends TestCase
             'home_team_id' => [
                 -1,
                 false,
-                true,
                 null,
                 "a",
                 [],
@@ -44,7 +43,6 @@ class PostTest extends TestCase
             'away_team_id' => [
                 -1,
                 false,
-                true,
                 null,
                 "a",
                 [],

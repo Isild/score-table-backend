@@ -6,6 +6,10 @@ use App\Http\Requests\TeamGetIndexRequest;
 use App\Http\Requests\TeamGetShowRequest;
 use App\Http\Requests\TeamPostRequest;
 use App\Http\Requests\TeamPutRequest;
+use App\Http\Requests\Matches\MatchGetRequest;
+use App\Http\Requests\Matches\MatchPostStartRequest;
+use App\Http\Requests\Matches\MatchPostStopRequest;
+use App\Http\Requests\Matches\MatchPatchScoreRequest;
 use App\Models\FootballMatch;
 use App\Models\Team;
 use App\Repositories\TeamRepository;
@@ -38,20 +42,20 @@ Route::prefix('teams')->group(function () {
 });
 
 Route::prefix('matches')->group(function () {
-    Route::get('/', function (Request $request) {
+    Route::get('/', function (MatchGetRequest $request) {
         return FootballMatch::with('homeTeam', 'awayTeam')
             ->where('total_time', '=', '00:00:00')
-            ->paginate($request->all()['limit'] ?? 50);
+            ->paginate($request->validated()['limit'] ?? 50);
     })->name('matches.active_matches');
-    Route::get('/summary', function (Request $request) {
+    Route::get('/summary', function (MatchGetRequest $request) {
         return FootballMatch::with('homeTeam', 'awayTeam')
             ->where('total_time', '!=', '00:00:00')
             ->orderBy('total_match_score', 'desc')
             ->orderBy('created_at')
-            ->paginate($request->all()['limit'] ?? 50);
+            ->paginate($request->validated()['limit'] ?? 50);
     })->name('matches.summary');
-    Route::post('/start', function (Request $request) {
-        $data = array_merge($request->all(), [
+    Route::post('/start', function (MatchPostStartRequest $request) {
+        $data = array_merge($request->validated(), [
             'home_team_score' => 0,
             'away_team_score' => 0,
             'total_match_score' => 0,
@@ -60,17 +64,17 @@ Route::prefix('matches')->group(function () {
 
         return FootballMatch::class::create($data);
     })->name('matches.start');
-    Route::post('/{footballMatch}/stop', function (Request $request, FootballMatch $footballMatch) {
+    Route::post('/{footballMatch}/stop', function (MatchPostStopRequest $request, FootballMatch $footballMatch) {
         $footballMatch->total_match_score = $footballMatch->home_team_score + $footballMatch->away_team_score;
         $footballMatch->total_time = Carbon::now()->diff($footballMatch->created_at)->format('%H:%I:%S');
         $footballMatch->save();
 
         return $footballMatch;
     })->name('matches.stop');
-    Route::patch('/{footballMatch}/score', function (Request $request, FootballMatch $footballMatch) {
+    Route::patch('/{footballMatch}/score', function (MatchPatchScoreRequest $request, FootballMatch $footballMatch) {
         if ($footballMatch->total_time == '00:00:00') {
-            $footballMatch->home_team_score = $request->all()['home_team_score'];
-            $footballMatch->away_team_score = $request->all()['away_team_score'];
+            $footballMatch->home_team_score = $request->validated()['home_team_score'];
+            $footballMatch->away_team_score = $request->validated()['away_team_score'];
             $footballMatch->save();
         } else {
             return 403;
