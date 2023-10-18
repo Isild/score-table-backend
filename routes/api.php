@@ -51,10 +51,21 @@ Route::prefix('matches')->group(function () {
             ->paginate($request->all()['limit'] ?? 50);
     })->name('matches.summary');
     Route::post('/start', function (Request $request) {
-        //
+        $data = array_merge($request->all(), [
+            'home_team_score' => 0,
+            'away_team_score' => 0,
+            'total_match_score' => 0,
+            'match_date' => Carbon::now()->toDateTimeString(),
+        ]);
+
+        return FootballMatch::class::create($data);
     })->name('matches.start');
     Route::post('/{footballMatch}/stop', function (Request $request, FootballMatch $footballMatch) {
-        //
+        $footballMatch->total_match_score = $footballMatch->home_team_score + $footballMatch->away_team_score;
+        $footballMatch->total_time = Carbon::now()->diff($footballMatch->created_at)->format('%H:%I:%S');
+        $footballMatch->save();
+
+        return $footballMatch;
     })->name('matches.stop');
     Route::patch('/{footballMatch}/score', function (Request $request, FootballMatch $footballMatch) {
         //
