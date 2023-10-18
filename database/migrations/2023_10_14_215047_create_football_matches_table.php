@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->unsignedSmallInteger('away_team_score');
             $table->unsignedSmallInteger('total_match_score');
             $table->dateTimeTz('match_date');
-            $table->time('total_time');
+            $table->time('total_time')->default('00:00:00');
             $table->timestamps();
 
             $table->foreign('home_team_id')->references('id')->on('teams');

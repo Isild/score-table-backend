@@ -39,10 +39,16 @@ Route::prefix('teams')->group(function () {
 
 Route::prefix('matches')->group(function () {
     Route::get('/', function (Request $request) {
-        //
+        return FootballMatch::with('homeTeam', 'awayTeam')
+            ->where('total_time', '=', '00:00:00')
+            ->paginate($request->all()['limit'] ?? 50);
     })->name('matches.active_matches');
     Route::get('/summary', function (Request $request) {
-        //
+        return FootballMatch::with('homeTeam', 'awayTeam')
+            ->where('total_time', '!=', '00:00:00')
+            ->orderBy('total_match_score', 'desc')
+            ->orderBy('created_at')
+            ->paginate($request->all()['limit'] ?? 50);
     })->name('matches.summary');
     Route::post('/start', function (Request $request) {
         //
