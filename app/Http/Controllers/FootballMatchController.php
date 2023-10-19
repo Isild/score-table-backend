@@ -28,7 +28,9 @@ class FootballMatchController extends Controller
      */
     public function active_matches(MatchGetRequest $request): LengthAwarePaginator
     {
-        //
+        return $this->match::class::where('total_time', '=', '00:00:00')
+            ->with('homeTeam', 'awayTeam')
+            ->paginate($request->validated()['limit'] ?? 50);
     }
 
     /**
@@ -40,7 +42,11 @@ class FootballMatchController extends Controller
      */
     public function summary_matches(MatchGetRequest $request): LengthAwarePaginator
     {
-        //
+        return $this->match::class::with('homeTeam', 'awayTeam')
+            ->where('total_time', '!=', '00:00:00')
+            ->orderBy('total_match_score', 'desc')
+            ->orderBy('created_at')
+            ->paginate($request->validated()['limit'] ?? 50);
     }
 
     /**
@@ -52,7 +58,19 @@ class FootballMatchController extends Controller
      */
     public function start_match(MatchPostStartRequest $request): JsonResponse
     {
-        //
+        $data = array_merge($request->validated(), [
+            'home_team_score' => 0,
+            'away_team_score' => 0,
+            'total_match_score' => 0,
+            'match_date' => Carbon::now()->toDateTimeString(),
+        ]);
+
+        $footballMatch = $this->match::class::create($data);
+
+        return response()->json(
+            $footballMatch,
+            201
+        );
     }
 
     /**
@@ -64,7 +82,14 @@ class FootballMatchController extends Controller
      */
     public function stop_match(MatchPostStopRequest $request, FootballMatch $footballMatch): JsonResponse
     {
-        //
+        $footballMatch->total_match_score = $footballMatch->home_team_score + $footballMatch->away_team_score;
+        $footballMatch->total_time = Carbon::now()->diff($footballMatch->created_at)->format('%H:%I:%S');
+        $footballMatch->save();
+
+        return response()->json(
+            $footballMatch,
+            200
+        );
     }
 
     /**
@@ -76,7 +101,22 @@ class FootballMatchController extends Controller
      */
     public function update_match_score(MatchPatchScoreRequest $request, FootballMatch $footballMatch): JsonResponse
     {
-        //
+        if ($footballMatch->total_time == '00:00:00') {
+            $requestData = $request->validated();
+            $footballMatch->home_team_score = $requestData['home_team_score'];
+            $footballMatch->away_team_score = $requestData['away_team_score'];
+            $footballMatch->save();
+
+            return response()->json(
+                $footballMatch,
+                200
+            );
+        } else {
+            return response()->json(
+                'Forbidden',
+                403
+            );
+        }
     }
 
 }

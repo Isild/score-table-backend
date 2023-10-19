@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\FootballMatchController;
 use App\Http\Requests\TeamDeleteRequest;
 use App\Http\Requests\TeamGetIndexRequest;
 use App\Http\Requests\TeamGetShowRequest;
@@ -42,44 +43,9 @@ Route::prefix('teams')->group(function () {
 });
 
 Route::prefix('matches')->group(function () {
-    Route::get('/', function (MatchGetRequest $request) {
-        return FootballMatch::with('homeTeam', 'awayTeam')
-            ->where('total_time', '=', '00:00:00')
-            ->paginate($request->validated()['limit'] ?? 50);
-    })->name('matches.active_matches');
-    Route::get('/summary', function (MatchGetRequest $request) {
-        return FootballMatch::with('homeTeam', 'awayTeam')
-            ->where('total_time', '!=', '00:00:00')
-            ->orderBy('total_match_score', 'desc')
-            ->orderBy('created_at')
-            ->paginate($request->validated()['limit'] ?? 50);
-    })->name('matches.summary');
-    Route::post('/start', function (MatchPostStartRequest $request) {
-        $data = array_merge($request->validated(), [
-            'home_team_score' => 0,
-            'away_team_score' => 0,
-            'total_match_score' => 0,
-            'match_date' => Carbon::now()->toDateTimeString(),
-        ]);
-
-        return FootballMatch::class::create($data);
-    })->name('matches.start');
-    Route::post('/{footballMatch}/stop', function (MatchPostStopRequest $request, FootballMatch $footballMatch) {
-        $footballMatch->total_match_score = $footballMatch->home_team_score + $footballMatch->away_team_score;
-        $footballMatch->total_time = Carbon::now()->diff($footballMatch->created_at)->format('%H:%I:%S');
-        $footballMatch->save();
-
-        return $footballMatch;
-    })->name('matches.stop');
-    Route::patch('/{footballMatch}/score', function (MatchPatchScoreRequest $request, FootballMatch $footballMatch) {
-        if ($footballMatch->total_time == '00:00:00') {
-            $footballMatch->home_team_score = $request->validated()['home_team_score'];
-            $footballMatch->away_team_score = $request->validated()['away_team_score'];
-            $footballMatch->save();
-        } else {
-            return 403;
-        }
-
-        return $footballMatch;
-    })->name('matches.update-score');
+    Route::get('/', [FootballMatchController::class, 'active_matches'])->name('matches.active_matches');
+    Route::get('/summary', [FootballMatchController::class, 'summary_matches'])->name('matches.summary');
+    Route::post('/start', [FootballMatchController::class, 'start_match'])->name('matches.start');
+    Route::post('/{footballMatch}/stop', [FootballMatchController::class, 'stop_match'])->name('matches.stop');
+    Route::patch('/{footballMatch}/score', [FootballMatchController::class, 'update_match_score'])->name('matches.update-score');
 });
